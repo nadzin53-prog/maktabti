@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>📚 Bibliothèques du Maroc - Portail public</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f4e9;
+            color: #2c3e2f;
+            line-height: 1.6;
+        }
+
+        /* Couleurs inspirées du Maroc : terre cuite, vert, bleu ciel */
+        :root {
+            --primary: #8B4513;     /* Terre cuite / marocain */
+            --primary-dark: #5a2d0c;
+            --secondary: #2c5f2d;   /* Vert des oasis */
+            --accent: #e6b422;      /* Ambre / sable */
+            --light: #fff8f0;
+            --gray: #f0ebe1;
+            --text: #2c3e2f;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* Header avec motif zellige stylisé */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 1rem 1rem;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        header::after {
+            content: "☪";
+            font-size: 3rem;
+            opacity: 0.1;
+            position: absolute;
+            bottom: 0;
+            right: 20px;
+            font-family: serif;
+        }
+
+        h1 {
+            font-size: 2rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .subhead {
+            font-style: italic;
+            opacity: 0.9;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* Navigation principale */
+        .nav-tabs {
+            display: flex;
+            background: var(--light);
+            border-bottom: 2px solid var(--accent);
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 0 16px;
+            gap: 4px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 30px 30px 0 0;
+            font-family: inherit;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: #2c3e2f;
+            border-bottom: 3px solid var(--secondary);
+        }
+
+        .nav-btn:hover:not(.active) {
+            background: var(--gray);
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Cartes & grilles */
+        .page {
+            display: none;
+            animation: fade 0.3s ease;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s;
+        }
+
+        .grid-2, .grid-3 {
+            display: grid;
+            gap: 24px;
+            margin: 2rem 0;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+        .info-card {
+            background: var(--light);
+            border-left: 8px solid var(--secondary);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+
+        .info-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #2c3e2f;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Liste des livres */
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .book-item {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2d9cc;
+            transition: 0.1s;
+        }
+
+        .book-info h4 {
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+        }
+
+        .book-info p {
+            font-size: 0.85rem;
+            color: #5a5a4e;
+        }
+
+        .book-status {
+            background: #2c5f2d20;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .btn-reserve {
+            background: var(--secondary);
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-reserve:hover {
+            background: #1f4520;
+            transform: scale(1.02);
+        }
+
+        .btn-reserve:disabled {
+            background: #9eaa9a;
+            cursor: not-allowed;
+        }
+
+        /* Formulaire adhésion */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        footer {
+            background: var(--primary-dark);
+            color: #ecd9c6;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            font-size: 0.85rem;
+        }
+
+        .contact-info {
+            background: #ffffffcc;
+            border-radius: 20px;
+            padding: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            .nav-btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📖 مكتبة المغرب <span style="font-weight:normal;">| Bibliothèques Publiques du Maroc</span></h1>
+    <div class="subhead">Culture, savoir et patrimoine — ouvert à toutes et tous 🇲🇦</div>
+</header>
+
+<div class="nav-tabs">
+    <button class="nav-btn active" data-page="accueil">🏠 Accueil</button>
+    <button class="nav-btn" data-page="catalogue">📚 Catalogue & réservation</button>
+    <button class="nav-btn" data-page="adhesion">🪪 Adhésion & carte</button>
+    <button class="nav-btn" data-page="horaires">⏰ Horaires & accès</button>
+    <button class="nav-btn" data-page="reseau">📍 Réseau national</button>
+</div>
+
+<div class="container">
+    <!-- PAGE ACCUEIL -->
+    <div id="accueil" class="page active-page">
+        <div class="card">
+            <h2>📌 Bienvenue sur le portail des bibliothèques publiques marocaines</h2>
+            <p>Ce service officiel vous permet d'explorer les collections, consulter les horaires d'ouverture, adhérer en ligne et localiser les bibliothèques partenaires sur tout le territoire. Découvrez un patrimoine riche de plus de <strong>370 000 documents</strong> toutes sections confondues, des manuscrits anciens aux dernières parutions.</p>
+            <p style="margin-top: 12px;">✨ La Bibliothèque Nationale du Royaume du Maroc (BNRM) et le réseau des médiathèques vous accueillent dans des espaces adaptés, avec des fonds jeunesse, recherche, audiovisuel, et accès pour personnes malvoyantes.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="info-card">
+                <h3>📖 53 000+ documents récents</h3>
+                <p>Espace grand public avec classification Dewey, romans, essais, sciences.</p>
+            </div>
+            <div class="info-card">
+                <h3>🖋️ 250 000 documents patrimoine</h3>
+                <p>Manuscrits rares, incunables, lithographies et livres anciens consultables en salle recherche.</p>
+            </div>
+            <div class="info-card">
+                <h3>🎧 10 000 titres de périodiques</h3>
+                <p>Journaux, revues scientifiques et magazines — accès en zone presse.</p>
+            </div>
+            <div class="info-card">
+                <h3>♿ Accessibilité & équipements</h3>
+                <p>Matériel de loupe, synthèse vocale, braille, et espaces adaptés aux mobilités réduites [citation:5].</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>⭐ Actualités culturelles</h3>
+            <p>📍 Atelier « Femmes connectées, femmes protégées » à la Médiathèque de Casablanca<br>
+            📍 Rencontres du mois de la Francophonie à la BNRM<br>
+            📍 Heure du conte en kamishibaï pour enfants (gratuit sur inscription) [citation:7]</p>
+        </div>
+    </div>
+
+    <!-- PAGE CATALOGUE AVEC RÉSERVATION SIMULÉE -->
+    <div id="catalogue" class="page">
+        <div class="card">
+            <h2>📘 Catalogue des nouveautés & classiques (fonds marocain et international)</h2>
+            <p>Réservez un ouvrage directement en ligne. Les documents sont disponibles dans les bibliothèques du réseau.</p>
+        </div>
+        <div id="bookContainer" class="book-list">
+            <!-- Les livres seront injectés ici dynamiquement -->
+        </div>
+        <div class="card" style="margin-top: 16px; background: #eef4ea;">
+            <p><strong>ℹ️ Réservation en ligne :</strong> Cliquez sur "Réserver" pour emprunter un ouvrage. Vous serez notifié par email (simulation). La durée de prêt est de 3 semaines, renouvelable 1 fois.</p>
+        </div>
+    </div>
+
+    <!-- PAGE ADHÉSION -->
+    <div id="adhesion" class="page">
+        <div class="card">
+            <h2>🪪 Devenir membre d'une bibliothèque publique au Maroc</h2>
+            <p>L'adhésion est ouverte à toutes et tous (étudiants, salariés, chercheurs, retraités, etc.). La BNRM demande un diplôme du baccalauréat minimum pour l'accès à la salle de recherche, mais les médiathèques municipales sont accessibles sans condition [citation:5].</p>
+            
+            <form id="membershipForm">
+                <div class="form-group">
+                    <label>Nom complet *</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="phone" placeholder="06xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>Ville de rattachement *</label>
+                    <select id="city">
+                        <option>Rabat</option>
+                        <option>Casablanca</option>
+                        <option>Fès</option>
+                        <option>Marrakech</option>
+                        <option>Tanger</option>
+                        <option>Oujda</option>
+                        <option>Agadir</option>
+                        <option>Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Type d'adhésion</label>
+                    <select id="memberType">
+                        <option>Étudiant (gratuit ou tarif réduit selon ville)</option>
+                        <option>Enseignant / Chercheur</option>
+                        <option>Public général (150 DH/an - BNRM)</option>
+                        <option>Famille (forfait spécial médiathèque)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">📝 Pré-inscrire ma carte</button>
+                <p style="margin-top: 15px; font-size: 0.8rem;">* Les horaires d'inscription à la BNRM sont du lundi au jeudi 09h-15h et vendredi 09h-12h30 [citation:2][citation:6].</p>
+            </form>
+            <div id="formMessage" style="margin-top: 20px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="info-card">
+            <h3>📌 Documents nécessaires pour l'inscription définitive</h3>
+            <ul style="margin-left: 20px;">
+                <li>Photo d'identité récente</li>
+                <li>CIN ou passeport</li>
+                <li>Justificatif de domicile</li>
+                <li>Diplôme du Bac (pour accès "salle recherche" BNRM) [citation:5]</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PAGE HORAIRES & INFOS PRATIQUES -->
+    <div id="horaires" class="page">
+        <div class="card">
+            <h2>⏰ Horaires d'ouverture des principales bibliothèques</h2>
+            <p>Horaires standards de la Bibliothèque Nationale (BNRM - Rabat) et médiathèques associées :</p>
+            <ul style="margin: 20px 0 20px 30px;">
+                <li><strong>Lundi au vendredi :</strong> 09h00 – 19h00 (continu)</li>
+                <li><strong>Samedi :</strong> 10h00 – 16h00</li>
+                <li><strong>Ramadan :</strong> Lundi–Vendredi 09h00–16h30, Samedi 10h00–14h00</li>
+                <li><strong>Horaires d'été (juillet) :</strong> 08h30 – 19h00 (lundi–vendredi), samedi 09h–14h</li>
+                <li><strong>Fermeture annuelle :</strong> mois d'août [citation:3]</li>
+            </ul>
+            <p>📢 Pour la Médiathèque de l'Institut français de Casablanca : ouverture mardi–samedi, fermeture dimanche & lundi. Vérifiez les plages spécifiques.</p>
+        </div>
+        <div class="grid-2">
+            <div class="info-card">
+                <h3>📍 Accès BNRM Rabat</h3>
+                <p>Avenue Ibn Khaldoun, Agdal, Rabat.<br>
+                Tél : 05 37 27 23 00 [citation:5]<br>
+                Parking à proximité, arrêt tramway.</p>
+            </div>
+            <div class="info-card">
+                <h3>♿ Services spéciaux</h3>
+                <p>Salle pour malvoyants (loupe, synthèse vocale, imprimante braille). Consigne gratuite, espace prière, caféteria [citation:5].</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE RÉSEAU NATIONAL -->
+    <div id="reseau" class="page">
+        <div class="card">
+            <h2>📍 Carte des bibliothèques publiques et associatives au Maroc </h2>
+            <p>Le ministère de la Jeunesse, de la Culture et de la Communication recense plus de 150 bibliothèques. Extraits du guide officiel [citation:4] :</p>
+        </div>
+        <div class="grid-3">
+            <div class="info-card"><strong>📘 Bibliothèque nationale</strong><br>BNRM – Rabat</div>
+            <div class="info-card"><strong>🌿 Bibliothèque Muhammad Lokash</strong><br>Quillma</div>
+            <div class="info-card"><strong>📖 Bibliothèque régionale</strong><br>Oujda</div>
+            <div class="info-card"><strong>🏛️ Médiathèque Casablanca</strong><br>Institut français, 44 500 documents</div>
+            <div class="info-card"><strong>📚 Bibliothèque Igzennayen</strong><br>Province de Nador</div>
+            <div class="info-card"><strong>🏫 Bibliothèque centre de réforme</strong><br>Settat, Benslimane</div>
+        </div>
+        <div class="card">
+            <p><strong>➕ Et aussi :</strong> Bibliothèque Sidi Mohamed Ibrahim, Maison de la Culture Bir Gandouz, réseau des bibliothèques associatives (Guelmim, Dar Al Atfal). En développement constant avec le plan national de lecture.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>📞 Contact officiel : Bibliothèque Nationale du Royaume du Maroc — 05 37 27 23 00 | adhésion: formulaire en ligne sur place.<br>
+    💡 Application publique d'information et de réservation de livres (simulation). Données basées sur les règlements et annonces officielles 2024-2025.</p>
+    <p style="margin-top:10px;">🇲🇦支持和促进阅读和马格里布遗产</p>
+</footer>
+
+<script>
+    // CATALOGUE DE LIVRES : inspiré des collections marocaines et classiques
+    const books = [
+        { id: 1, title: "Le Chardon et le Tartin", author: "Tahar Ben Jelloun", year: "2021", available: true, category: "Littérature marocaine" },
+        { id: 2, title: "Les nuits de Strasbourg", author: "Assia Djebar", year: "2018", available: true, category: "Roman" },
+        { id: 3, title: "Harraga", author: "Boubacar Boris Diop", year: "2019", available: false, category: "Littérature africaine" },
+        { id: 4, title: "L'Islam expliqué aux enfants", author: "Tahar Ben Jelloun", year: "2020", available: true, category: "Jeunesse" },
+        { id: 5, title: "Dictionnaire des arts de l'Islam", author: "Collectif BNRM", year: "2019", available: true, category: "Patrimoine" },
+        { id: 6, title: "Petit éloge de la mémoire", author: "Abdelkader Retnani", year: "2022", available: true, category: "Essai" },
+        { id: 7, title: "Manuscrits de Fès (édition critique)", author: "BNRM - Département manuscrits", year: "2020", available: false, category: "Recherche" },
+        { id: 8, title: "La carte postale", author: "Anne Berest", year: "2023", available: true, category: "Roman" }
+    ];
+
+    function renderBooks() {
+        const container = document.getElementById('bookContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        books.forEach(book => {
+            const bookDiv = document.createElement('div');
+            bookDiv.className = 'book-item';
+            bookDiv.innerHTML = `
+                <div class="book-info">
+                    <h4>📖 ${book.title}</h4>
+                    <p>${book.author} · ${book.year} · ${book.category}</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span class="book-status">${book.available ? '✅ Disponible' : '❌ Emprunté'}</span>
+                    <button class="btn-reserve" data-id="${book.id}" ${!book.available ? 'disabled' : ''}>
+                        ${book.available ? '📲 Réserver' : 'Indisponible'}
+                    </button>
+                </div>
+            `;
+            container.appendChild(bookDiv);
+        });
+
+        // Ajouter les events listeners après injection
+        document.querySelectorAll('.btn-reserve').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                const book = books.find(b => b.id === id);
+                if (book && book.available) {
+                    alert(`✅ Réservation confirmée pour "${book.title}". Vous recevrez un email de confirmation pour le retirer dans la bibliothèque de votre choix (Rabat, Casablanca...).`);
+                    // simulation : on passe le livre à indisponible pour l'exemple
+                    book.available = false;
+                    renderBooks();   // rafraîchit l'affichage
+                } else {
+                    alert("Désolé, ce livre n'est plus disponible à la réservation.");
+                }
+            });
+        });
+    }
+
+    // Gestion formulaire adhésion
+    const form = document.getElementById('membershipForm');
+    if(form){
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const ville = document.getElementById('city').value;
+            if(name && email){
+                document.getElementById('formMessage').innerHTML = `✨ Merci ${name} ! Votre pré-inscription pour ${ville} a été prise en compte. Rendez-vous à la bibliothèque avec vos documents dans les 30 jours. Un email de confirmation a été envoyé à ${email}.`;
+                form.reset();
+            } else {
+                document.getElementById('formMessage').innerHTML = "⚠️ Veuillez remplir tous les champs obligatoires.";
+            }
+        });
+    }
+
+    // Navigation entre les pages (onglets)
+    const pages = document.querySelectorAll('.page');
+    const navBtns = document.querySelectorAll('.nav-btn');
+
+    function switchPage(pageId) {
+        pages.forEach(page => {
+            page.classList.remove('active-page');
+        });
+        const activePage = document.getElementById(pageId);
+        if(activePage) activePage.classList.add('active-page');
+        
+        navBtns.forEach(btn => {
+            if(btn.getAttribute('data-page') === pageId) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pageId = btn.getAttribute('data-page');
+            switchPage(pageId);
+        });
+    });
+
+    // initialisation catalogue
+    renderBooks();
+</script>
+</body>
+</html>
